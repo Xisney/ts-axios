@@ -21,8 +21,8 @@ axios({
   method: 'post',
   url: '/user/12345',
   data: {
-    firstName: 'Yee',
-    lastName: 'Huang'
+    firstName: 'Roy',
+    lastName: 'Xie'
   }
 })
 ```
