@@ -11,9 +11,11 @@ export type Method =
   | 'delete'
   | 'options'
   | 'OPTIONS'
+  | 'patch'
+  | 'PATCH'
 
 export interface AxiosRequestConfig {
-  url: string
+  url?: string
   method?: Method
   params?: any
   data?: any
@@ -22,8 +24,8 @@ export interface AxiosRequestConfig {
   timeout?: number
 }
 
-export interface AxiosResponse {
-  data: any
+export interface AxiosResponse<T> {
+  data: T
   status: number
   statusText: string
   headers: any
@@ -31,13 +33,38 @@ export interface AxiosResponse {
 }
 
 // 限制resolve的参数是AxiosResponse类型
-export interface ResponesPromise extends Promise<AxiosResponse> {}
+export interface ResponesPromise<T = any> extends Promise<AxiosResponse<T>> {}
 
 // 定义错误类型接口
 export interface AxiosError extends Error {
   config: AxiosRequestConfig
   code?: string | null
   request?: any
-  response?: AxiosResponse
+  response?: AxiosResponse<any>
   isAxiosError: boolean
+}
+
+// 扩展axios
+export interface Axios {
+  request<T = any>(config: AxiosRequestConfig): ResponesPromise<T>
+
+  get<T = any>(url: string, config?: AxiosRequestConfig): ResponesPromise<T>
+
+  delete<T = any>(url: string, config?: AxiosRequestConfig): ResponesPromise<T>
+
+  head<T = any>(url: string, config?: AxiosRequestConfig): ResponesPromise<T>
+
+  options<T = any>(url: string, config?: AxiosRequestConfig): ResponesPromise<T>
+
+  post<T = any>(url: string, data?: any, config?: AxiosRequestConfig): ResponesPromise<T>
+
+  put<T = any>(url: string, data?: any, config?: AxiosRequestConfig): ResponesPromise<T>
+
+  patch<T = any>(url: string, data?: any, config?: AxiosRequestConfig): ResponesPromise<T>
+}
+
+export interface AxiosInstance extends Axios {
+  // axios函数重载
+  <T = any>(config: AxiosRequestConfig): ResponesPromise<T>
+  <T = any>(url: string, config?: AxiosRequestConfig): ResponesPromise<T>
 }
