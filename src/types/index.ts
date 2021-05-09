@@ -24,7 +24,7 @@ export interface AxiosRequestConfig {
   timeout?: number
 }
 
-export interface AxiosResponse<T> {
+export interface AxiosResponse<T = any> {
   data: T
   status: number
   statusText: string
@@ -46,6 +46,11 @@ export interface AxiosError extends Error {
 
 // 扩展axios
 export interface Axios {
+  interceptors: {
+    request: InterceptorManager<AxiosRequestConfig>
+    response: InterceptorManager<AxiosResponse>
+  }
+
   request<T = any>(config: AxiosRequestConfig): ResponesPromise<T>
 
   get<T = any>(url: string, config?: AxiosRequestConfig): ResponesPromise<T>
@@ -67,4 +72,19 @@ export interface AxiosInstance extends Axios {
   // axios函数重载
   <T = any>(config: AxiosRequestConfig): ResponesPromise<T>
   <T = any>(url: string, config?: AxiosRequestConfig): ResponesPromise<T>
+}
+
+export interface InterceptorManager<T> {
+  use(resolved: ResolvedFn<T>, rejected?: RejectedFn): number
+  eject(id: number): void
+}
+
+// 因为可能为响应或请求拦截器，使用泛型限制参数
+export interface ResolvedFn<T> {
+  // 限制promise resolve函数的类型
+  (val: T): T | Promise<T>
+}
+
+export interface RejectedFn {
+  (error: any): any
 }
