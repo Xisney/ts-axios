@@ -114,6 +114,8 @@ export default class Axios {
     // 利用promise链式调用，起手为promise，一直传递
     while (chain.length) {
       const { resolved, rejected } = chain.shift()!
+      // 在resolved函数中抛出异常将会返回一个拒绝的期约
+      // 如果只是返回一个一个错误对象，任然会用解决的期约包装
       res = res.then(resolved, rejected)
     }
 

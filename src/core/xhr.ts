@@ -3,10 +3,18 @@ import { transformResponse } from '../helpers/data'
 import { parseHeader } from '../helpers/header'
 import { createAxiosError } from '../helpers/error'
 import transform from './transform'
+import Cancel from '../cancel/Cancel'
 
 export function xhr(config: AxiosRequestConfig): ResponesPromise {
   return new Promise((resolve, reject) => {
-    const { method = 'GET', data = null, headers = null, responseType = '', timeout = 0 } = config
+    const {
+      method = 'GET',
+      data = null,
+      headers = null,
+      responseType = '',
+      timeout = 0,
+      cancelToken
+    } = config
 
     const xhr = new XMLHttpRequest()
     xhr.open(method.toUpperCase(), config.url!, true)
@@ -60,6 +68,14 @@ export function xhr(config: AxiosRequestConfig): ResponesPromise {
 
     xhr.ontimeout = () => {
       reject(createAxiosError('request timeout', config, 'ECONNABORTED', xhr))
+    }
+
+    // 控制xhr，使之可以取消
+    if (cancelToken) {
+      cancelToken.promise.then(msg => {
+        xhr.abort()
+        reject(new Cancel(`${msg.message}`))
+      })
     }
 
     xhr.send(data)
