@@ -2,6 +2,7 @@ import { AxiosRequestConfig, ResponesPromise } from '../types'
 import { transformResponse } from '../helpers/data'
 import { parseHeader } from '../helpers/header'
 import { createAxiosError } from '../helpers/error'
+import transform from './transform'
 
 export function xhr(config: AxiosRequestConfig): ResponesPromise {
   return new Promise((resolve, reject) => {
@@ -24,9 +25,9 @@ export function xhr(config: AxiosRequestConfig): ResponesPromise {
     xhr.onreadystatechange = () => {
       if (xhr.readyState === 4) {
         const status = xhr.status
-        const data = transformResponse(xhr.response)
         const statusText = xhr.statusText
         const headers = parseHeader(xhr.getAllResponseHeaders())
+        const data = transform(xhr.response, headers, config.transformResponse)
         const response = {
           data,
           status,

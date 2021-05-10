@@ -26,8 +26,14 @@ function deepMergeStrat(config1: any, config2: any): any {
   }
 }
 
+// // transformer合并策略
+// function transformerStrat(config1: any, config2: any): any {
+//   return config1.concat(config2 === undefined ? [] : config2)
+// }
+
 const stratCustom = ['url', 'params', 'data']
 const deepStrat = ['headers']
+// const transStrat = ['transformRequest', 'transformResponse']
 
 stratCustom.forEach(key => {
   stratHash[key] = fromConfig2Strat
@@ -36,6 +42,10 @@ stratCustom.forEach(key => {
 deepStrat.forEach(key => {
   stratHash[key] = deepMergeStrat
 })
+
+// transStrat.forEach(key => {
+//   stratHash[key] = transformerStrat
+// })
 
 export default function mergeConfig(config1: AxiosRequestConfig, config2: AxiosRequestConfig = {}) {
   const config = Object.create(null)

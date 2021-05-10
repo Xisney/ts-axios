@@ -5,6 +5,8 @@ import processConfig from './processConfig'
 // 封装逻辑，提取流程
 function dispatch(config: AxiosRequestConfig): ResponesPromise {
   processConfig(config)
+  console.log(config)
+
   return xhr(config)
 }
 

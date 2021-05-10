@@ -42,11 +42,8 @@ export default class Axios {
     } else {
       config = url
     }
-    console.log(this.defaultConfig)
-    console.log(config)
 
     config = mergeConfig(this.defaultConfig, config)
-    console.log(config)
 
     const chain: PromiseChain<any>[] = [
       {
