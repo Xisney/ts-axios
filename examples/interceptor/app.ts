@@ -34,6 +34,17 @@ axios({
   headers: {
     test: ''
   }
-}).then((res) => {
+}).then(res => {
   console.log(res.data)
 })
+
+axios
+  .get('/interceptor/get', {
+    method: 'get',
+    headers: {
+      test: ''
+    }
+  })
+  .then(res => {
+    console.log(res.data)
+  })

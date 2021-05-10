@@ -45,31 +45,7 @@ export default class Axios {
 
     config = mergeConfig(this.defaultConfig, config)
 
-    const chain: PromiseChain<any>[] = [
-      {
-        resolved: dispatchRequest,
-        rejected: undefined
-      }
-    ]
-
-    // 装配拦截器
-    this.interceptors.request.foreach(interceptor => {
-      chain.unshift(interceptor)
-    })
-
-    this.interceptors.response.foreach(interceptor => {
-      chain.push(interceptor)
-    })
-
-    let res = Promise.resolve(config)
-
-    // 利用promise链式调用，起手为promise，一直传递
-    while (chain.length) {
-      const { resolved, rejected } = chain.shift()!
-      res = res.then(resolved, rejected)
-    }
-
-    return res
+    return this._runInterceptor(config)
   }
 
   get(url: string, config?: AxiosRequestConfig): ResponesPromise {
@@ -101,7 +77,9 @@ export default class Axios {
   }
 
   private _sendRequest(method: Method, url: string, config?: AxiosRequestConfig): ResponesPromise {
-    return dispatchRequest(Object.assign(config || {}, { url, method }))
+    config = mergeConfig(this.defaultConfig, config)
+
+    return this._runInterceptor(Object.assign(config || {}, { url, method }))
   }
 
   private _sendRequestData(
@@ -110,6 +88,35 @@ export default class Axios {
     data?: any,
     config?: AxiosRequestConfig
   ): ResponesPromise {
-    return dispatchRequest(Object.assign(config || {}, { url, data, method }))
+    config = mergeConfig(this.defaultConfig, config)
+    return this._runInterceptor(Object.assign(config || {}, { url, data, method }))
+  }
+
+  private _runInterceptor(config: any): ResponesPromise {
+    const chain: PromiseChain<any>[] = [
+      {
+        resolved: dispatchRequest,
+        rejected: undefined
+      }
+    ]
+
+    // 装配拦截器
+    this.interceptors.request.foreach(interceptor => {
+      chain.unshift(interceptor)
+    })
+
+    this.interceptors.response.foreach(interceptor => {
+      chain.push(interceptor)
+    })
+
+    let res = Promise.resolve(config)
+
+    // 利用promise链式调用，起手为promise，一直传递
+    while (chain.length) {
+      const { resolved, rejected } = chain.shift()!
+      res = res.then(resolved, rejected)
+    }
+
+    return res
   }
 }
