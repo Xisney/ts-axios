@@ -32,7 +32,7 @@ function deepMergeStrat(config1: any, config2: any): any {
 // }
 
 const stratCustom = ['url', 'params', 'data']
-const deepStrat = ['headers']
+const deepStrat = ['headers', 'auth']
 // const transStrat = ['transformRequest', 'transformResponse']
 
 stratCustom.forEach(key => {

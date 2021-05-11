@@ -21,19 +21,21 @@ export function merge<T, U>(to: T, from: U): T & U {
 export function deepMerge(...objs: any[]): any {
   const res = Object.create(null)
   objs.forEach(obj => {
-    Object.keys(obj).forEach(key => {
-      const val = obj[key]
-      if (isPlainObject(val)) {
-        // 多个对象可能已经存在key
-        if (isPlainObject(res[key])) {
-          res[key] = deepMerge(res[key], val)
+    if (obj) {
+      Object.keys(obj).forEach(key => {
+        const val = obj[key]
+        if (isPlainObject(val)) {
+          // 多个对象可能已经存在key
+          if (isPlainObject(res[key])) {
+            res[key] = deepMerge(res[key], val)
+          } else {
+            res[key] = deepMerge(val)
+          }
         } else {
-          res[key] = deepMerge(val)
+          res[key] = val
         }
-      } else {
-        res[key] = val
-      }
-    })
+      })
+    }
   })
   return res
 }

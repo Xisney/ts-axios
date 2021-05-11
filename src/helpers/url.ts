@@ -53,3 +53,21 @@ export function buildUrl(url: string, params?: any): string {
   }
   return url
 }
+
+type URLOrigin = string
+
+export function isURlSameOrigin(requestUrl: string): boolean {
+  const requestOrigin = resolveURl(requestUrl)
+  const currentOrigin = location.origin
+  return requestOrigin === currentOrigin
+}
+
+function resolveURl(requestUrl: string): URLOrigin {
+  const a = document.createElement('a')
+  a.href = requestUrl
+  return a.origin
+}
+
+export function isFormData(val: any): val is FormData {
+  return val && val instanceof FormData
+}
