@@ -1,5 +1,5 @@
 {
-  "name": "ts-axios-new",
+  "name": "ts-axios-xys",
   "version": "0.1.5",
   "description": "",
   "keywords": [],
@@ -9,10 +9,10 @@
   "files": [
     "dist"
   ],
-  "author": "ustbhuangyi <280309453@qq.com>",
+  "author": "roy-xie <1837534886@qq.com>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ustbhuangyi/ts-axios"
+    "url": "https://github.com/Xisney/ts-axios"
   },
   "license": "MIT",
   "engines": {
