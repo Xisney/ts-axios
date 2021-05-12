@@ -28,10 +28,13 @@ export interface AxiosRequestConfig {
   withCredentials?: boolean
   xsrfCookieName?: string
   xsrfHeaderName?: string
+  auth?: AxiosBasicCredentials
+  baseURL?: string
+
   onDownloadProgress?: (e: ProgressEvent) => void
   onUploadProgress?: (e: ProgressEvent) => void
-  auth?: AxiosBasicCredentials
   validateStatus?: (status: number) => boolean
+  paramsSerializer?: (params: any) => string
   [key: string]: any
 }
 
@@ -64,7 +67,7 @@ export interface Axios {
 
   defaultConfig: AxiosRequestConfig
 
-  request<T = any>(config: AxiosRequestConfig): ResponesPromise<T>
+  request<T = any>(url: any, config: AxiosRequestConfig): ResponesPromise<T>
 
   get<T = any>(url: string, config?: AxiosRequestConfig): ResponesPromise<T>
 
@@ -79,6 +82,8 @@ export interface Axios {
   put<T = any>(url: string, data?: any, config?: AxiosRequestConfig): ResponesPromise<T>
 
   patch<T = any>(url: string, data?: any, config?: AxiosRequestConfig): ResponesPromise<T>
+
+  getUrl(config: AxiosRequestConfig): string
 }
 
 export interface AxiosInstance extends Axios {
@@ -93,6 +98,13 @@ export interface AxiosStatic extends AxiosInstance {
   CancelToken: CancelTokenStatic
   Cancel: CancelStatic
   isCancel: (value: any) => boolean
+  all<T>(promises: Array<T | Promise<T>>): Promise<T[]>
+  spread<T, R>(callback: (...args: T[]) => R): (arr: T[]) => R
+  Axios: AxiosClassStatic
+}
+
+export interface AxiosClassStatic {
+  new (config: AxiosRequestConfig): Axios
 }
 
 export interface InterceptorManager<T> {

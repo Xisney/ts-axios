@@ -10,6 +10,10 @@ export function isPlainObject(args: any): args is Object {
   return args !== null && toString.call(args) === '[object Object]'
 }
 
+export function isURLSearchParams(val: any): val is URLSearchParams {
+  return val && val instanceof URLSearchParams
+}
+
 // 将两者合并，类型联合
 export function merge<T, U>(to: T, from: U): T & U {
   for (const key in from) {

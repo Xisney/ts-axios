@@ -9,6 +9,7 @@ import {
 import dispatchRequest from './dispatch'
 import InterceptorManager from './InterceptorManager'
 import mergeConfig from './mergeConfig'
+import { transformUrl } from './processConfig'
 
 interface Interceptors {
   request: InterceptorManager<AxiosRequestConfig>
@@ -74,6 +75,11 @@ export default class Axios {
 
   patch(url: string, data?: any, config?: AxiosRequestConfig): ResponesPromise {
     return this._sendRequestData('patch', url, data, config)
+  }
+
+  getUrl(config: AxiosRequestConfig) {
+    config = mergeConfig(this.defaultConfig, config)
+    return transformUrl(config)
   }
 
   private _sendRequest(method: Method, url: string, config?: AxiosRequestConfig): ResponesPromise {

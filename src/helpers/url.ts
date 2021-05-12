@@ -1,4 +1,4 @@
-import { isDate, isPlainObject } from './utils'
+import { isDate, isPlainObject, isURLSearchParams } from './utils'
 
 export function encode(args: string): string {
   return encodeURIComponent(args)
@@ -11,39 +11,53 @@ export function encode(args: string): string {
     .replace(/%5D/gi, ']')
 }
 
-export function buildUrl(url: string, params?: any): string {
+export function buildUrl(
+  url: string,
+  params?: any,
+  paramsSerializer?: (params: any) => string
+): string {
   if (!params) {
     return url
   }
 
-  const parts: string[] = []
+  let formatParams
 
-  Object.keys(params).forEach(key => {
-    const val = params[key]
-    if (val === null || val === undefined) {
-      // 跳出当前回调函数
-      return
-    }
-    let values: string[]
-    // 将value都装入数组，统一处理
-    if (Array.isArray(val)) {
-      values = val
-      key += '[]'
-    } else {
-      values = [val]
-    }
+  if (paramsSerializer) {
+    formatParams = paramsSerializer(params)
+  } else if (isURLSearchParams(params)) {
+    formatParams = params.toString()
+  } else {
+    const parts: string[] = []
 
-    values.forEach(val => {
-      if (isDate(val)) {
-        val = val.toISOString()
-      } else if (isPlainObject(val)) {
-        val = JSON.stringify(val)
+    Object.keys(params).forEach(key => {
+      const val = params[key]
+      if (val === null || val === undefined) {
+        // 跳出当前回调函数
+        return
       }
-      parts.push(`${encode(key)}=${encode(val)}`)
-    })
-  })
 
-  let formatParams = parts.join('&')
+      let values: string[]
+      // 将value都装入数组，统一处理
+      if (Array.isArray(val)) {
+        values = val
+        key += '[]'
+      } else {
+        values = [val]
+      }
+
+      values.forEach(val => {
+        if (isDate(val)) {
+          val = val.toISOString()
+        } else if (isPlainObject(val)) {
+          val = JSON.stringify(val)
+        }
+        parts.push(`${encode(key)}=${encode(val)}`)
+      })
+    })
+
+    formatParams = parts.join('&')
+  }
+
   if (formatParams) {
     const hashIndex = url.indexOf('#')
     if (hashIndex !== -1) {
@@ -70,4 +84,12 @@ function resolveURl(requestUrl: string): URLOrigin {
 
 export function isFormData(val: any): val is FormData {
   return val && val instanceof FormData
+}
+
+export function isAbsoluteURL(url: string): boolean {
+  return /^([a-z][a-z\d\+\-\.]*:)?\/\//i.test(url)
+}
+
+export function combineURL(baseURL: string, relativeURL: string): string {
+  return baseURL.replace(/\/+$/, '') + '/' + relativeURL.replace(/^\/+/, '')
 }
